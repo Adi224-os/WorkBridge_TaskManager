@@ -11,6 +11,8 @@ import InfoCard from '../../components/Cards/InfoCard';
 import { LuArrowRight } from 'react-icons/lu';
 import TaskListTable from '../../components/TaskListTable';
 import CustomPiechart from '../../components/Charts/CustomPiechart';
+import CustomBarchart from '../../components/Charts/CustomBarchart';
+
 
 const COLORS = ["#8D51FF", "#00B8DB", "#7BCE00"];
 
@@ -44,7 +46,7 @@ const Dashboard = () => {
       {priority: "High", count: taskPriorityLevels?.High || 0},
     ];
 
-    setBarChartData(taskDistribution);
+    setBarChartData(PriorityLevelData);
   };
 
   const getDashboardData = async () => {
@@ -70,7 +72,8 @@ const Dashboard = () => {
 
     return () => {}
   }, [])
-  return <DashboardLayout activeMenu="Dashboard">
+  return (
+    <DashboardLayout activeMenu="Dashboard">
     <div className="card my-5">
       <div>
         <div className="col-span-3">
@@ -132,6 +135,18 @@ const Dashboard = () => {
         </div>
       </div>
 
+      <div>
+        <div className="card">
+          <div className="flex items-center justify-between">
+            <h5 className="font-medium">Task Priority Levels</h5>
+          </div>
+
+          <CustomBarchart
+            data={barChartData}
+          />
+        </div>
+      </div>
+
       <div className="md:col-span-2">
         <div className="card">
           <div className="flex items-center justify-between">
@@ -147,7 +162,7 @@ const Dashboard = () => {
         </div>
       </div>
     </div>
-  </DashboardLayout>;
-};
+  </DashboardLayout>
+)};
 
 export default Dashboard;
