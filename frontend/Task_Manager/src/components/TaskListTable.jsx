@@ -1,7 +1,7 @@
 import React from 'react'
 import moment from 'moment'
 
-const TaskListTable = ({tableData}) => {
+const TasklistTable = ({tableData}) => {
     const getStatusBadgeColor = (status) => {
         switch(status) {
             case 'Completed': return 'bg-green-100 text-green-500 border border-green-200';
@@ -55,4 +55,4 @@ const TaskListTable = ({tableData}) => {
   )
 }
 
-export default TaskListTable
+export default TasklistTable

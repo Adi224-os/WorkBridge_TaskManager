@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
 import { PRIORITY_DATA } from '../../utils/data';
 import axiosInstance from '../../utils/axiosInstance';
@@ -58,7 +58,7 @@ const CreateTask = () => {
     setLoading(true);
 
     try{
-      const todoList = taskData.todoChecklist?.map((item) => ({
+      const todolist = taskData.todoChecklist?.map((item) => ({
         text: item,
         completed: false,
       }));
@@ -66,7 +66,7 @@ const CreateTask = () => {
       const response = await axiosInstance.post(API_PATHS.TASKS.CREATE_TASK, {
         ...taskData,
         dueDate: new Date(taskData.dueDate).toISOString(),
-        todoChecklist: todoList,
+        todoChecklist: todolist,
       });
 
       toast.success("Task Created Successfully");
@@ -81,7 +81,37 @@ const CreateTask = () => {
   };
 
   //Update Task
-  const updateTask = async () => {};
+  const updateTask = async () => {
+    setLoading(true);
+
+    try {
+      const todolist = taskData.todoChecklist?.map((item) => {
+        const prevTodoChecklist = currentTask?.todoChecklist || [];
+        const matchedTask = prevTodoChecklist.find((task) => task.text == item);
+
+        return {
+          text: item,
+          completed: matchedTask ? matchedTask.completed : false,
+        };
+      });
+
+      const response = await axiosInstance.put(
+        API_PATHS.TASKS.UPDATE_TASK(taskId),
+        {
+          ...taskData,
+          dueDate: new Date(taskData.dueDate).toISOString(),
+          todoChecklist: todolist,
+        }
+      );
+
+      toast.success("Task Updated Successfully");
+    } catch (error) {
+      console.error("Error creating task:", error);
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async () => {
     setError(null);
@@ -120,11 +150,44 @@ const CreateTask = () => {
 
   //get Task info by ID
   const getTaskDetailsByID = async () => {
-    
+    try{
+      const response = await axiosInstance.get(
+        API_PATHS.TASKS.GET_TASK_BY_ID(taskId)
+      );
+
+      if(response.data) {
+        const taskInfo = response.data;
+        setCurrentTask(taskInfo);
+
+        setTaskData((prevState) => ({
+          title: taskInfo.title,
+          description: taskInfo.description,
+          priority: taskInfo.priority,
+          dueDate: taskInfo.dueDate
+            ? moment(taskInfo.dueDate).format("YYYY-MM-DD")
+            : null,
+          assignedTo: taskInfo?.assignedTo?.map((item) => item?._id) || [],
+          todoChecklist:
+            taskInfo?.todoChecklist?.map((item) => item?.text) || [],
+          attachments: taskInfo?.attachments || [],
+        }));
+      }
+    } catch(error) {
+      console.error("Error fetching users:", error);
+    }
   };
 
   //Delete Task
   const deleteTask = async () => {};
+
+  useEffect(() => {
+    if(taskId){
+      getTaskDetailsByID(taskId)
+    }
+  
+    return () => {}
+  }, [taskId]);
+  
 
   return (
     <DashboardLayout activeMenu="Create Task">
@@ -226,8 +289,8 @@ const CreateTask = () => {
               </label>
 
               <TodoListInput
-                todoList={taskData?.todoChecklist}
-                setTodoList={(value) => 
+                todolist={taskData?.todoChecklist}
+                setTodolist={(value) => 
                   handleValueChange("todoChecklist", value)
                 }
               />

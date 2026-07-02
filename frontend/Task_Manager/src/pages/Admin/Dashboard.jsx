@@ -9,7 +9,7 @@ import moment from 'moment'
 import { addThousandsSeparator } from '../../utils/helper';
 import InfoCard from '../../components/Cards/InfoCard';
 import { LuArrowRight } from 'react-icons/lu';
-import TaskListTable from '../../components/TaskListTable';
+import TasklistTable from '../../components/TaskListTable';
 import CustomPiechart from '../../components/Charts/CustomPiechart';
 import CustomBarchart from '../../components/Charts/CustomBarchart';
 
@@ -157,7 +157,7 @@ const Dashboard = () => {
             </button>
           </div>
 
-          <TaskListTable tableData={dashboardData?.recentTasks || []} />
+          <TasklistTable tableData={dashboardData?.recentTasks || []} />
         
         </div>
       </div>
