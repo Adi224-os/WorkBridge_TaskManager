@@ -1,25 +1,25 @@
 import React, { useState } from 'react'
 import {HiMiniPlus, HiOutlineTrash} from "react-icons/hi2";
 
-const TodoListInput = ({todoList, setTodoList}) => {
+const TodolistInput = ({todolist, setTodolist}) => {
     const [option, setOption] = useState("");
 
     //Function to handle adding an option
     const handleAddOption = () => {
         if(option.trim()){
-            setTodoList([...todoList, option.trim()]);
+            setTodolist([...todolist, option.trim()]);
             setOption("");
         }
     };
 
     //Function to handle deleting an option
     const handleDeleteOption = (index) => {
-        const updateArr = todoList.filter((_, idx) => idx !== index);
-        setTodoList(updateArr);
+        const updateArr = todolist.filter((_, idx) => idx !== index);
+        setTodolist(updateArr);
     };
   return (
     <div>
-        {todoList.map((item, index) => (
+        {todolist.map((item, index) => (
             <div 
                 key={item}
                 className="flex justify-between bg-gray-50 border border-gray-100 px-3 py-2 rounded-md mb-3 mt-2"
@@ -59,4 +59,4 @@ const TodoListInput = ({todoList, setTodoList}) => {
   )
 }
 
-export default TodoListInput
+export default TodolistInput

@@ -31,7 +31,7 @@ const getTasks =  async (req,res) => {
         //Add completed todoChecklist coutn to each task
         tasks = await Promise.all(
             tasks.map(async(task) => {
-                const completedCount = task.todoCheckList.filter(
+                const completedCount = task.todoChecklist.filter(
                     (item) => item.completed
                 ).length;
                 return {...task._doc, completedTodoCount: completedCount};
@@ -105,7 +105,7 @@ const createTask = async (req,res) => {
             dueDate,
             assignedTo,
             attachments,
-            todoCheckList,
+            todoChecklist,
         } = req.body;
 
         if(!Array.isArray(assignedTo)){
@@ -119,7 +119,7 @@ const createTask = async (req,res) => {
             dueDate,
             assignedTo,
             createdBy: req.user._id,
-            todoCheckList,
+            todoChecklist,
             attachments,
         });
 
@@ -142,7 +142,7 @@ const updateTask = async (req, res) => {
         task.description = req.body.description || task.description;
         task.priority = req.body.priority || task.priority;
         task.dueDate = req.body.dueDate || task.dueDate;
-        task.todoCheckList = req.body.todoCheckList || task.todoCheckList;
+        task.todoChecklist = req.body.todoChecklist || task.todoChecklist;
         task.attachments = req.body.attachments || task.attachments;
 
         if(req.body.assignedTo)
@@ -199,7 +199,7 @@ const updateTaskStatus = async (req, res) => {
         task.status = req.body.status || task.status;
 
         if(task.status === "Completed"){
-            task.todoCheckList.forEach((item) => (item.completed = true));
+            task.todoChecklist.forEach((item) => (item.completed = true));
             task.progress = 100;
         }
 
@@ -213,9 +213,9 @@ const updateTaskStatus = async (req, res) => {
 //@desc Update Task checkList
 // @route PUT/api/tasks/:id/todo
 // @access Private
-const updateTaskCheckList = async (req, res) => {
+const updateTaskChecklist = async (req, res) => {
     try {
-        const {todoCheckList} = req.body;
+        const {todoChecklist} = req.body;
         const task = await Task.findById(req.params.id);
 
         if(!task) return res.status(404).json({message: "Task not found"});
@@ -225,13 +225,13 @@ const updateTaskCheckList = async (req, res) => {
             return res.status(403).json({message: "Not authorized to update checklist"});
         }
 
-        task.todoCheckList = todoCheckList; //Replace woth updated checklist
+        task.todoChecklist = todoChecklist; //Replace woth updated checklist
 
         //Auto update progress based on checklist completion
-        const completedCount = task.todoCheckList.filter(
+        const completedCount = task.todoChecklist.filter(
             (item) => item.completed
         ).length;
-        const totalItems = task.todoCheckList.length;
+        const totalItems = task.todoChecklist.length;
         task.progress = totalItems > 0 ? Math.round((completedCount / totalItems) * 100) : 0;
 
         //Auto-mark task as completed if all items are checked
@@ -402,7 +402,7 @@ module.exports = {
     updateTask,
     deleteTask,
     updateTaskStatus,
-    updateTaskCheckList,
+    updateTaskChecklist,
     getDashboardData,
     getUserdashboardData,
 };
